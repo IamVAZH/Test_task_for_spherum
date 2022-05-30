@@ -20,6 +20,7 @@ public class RootController {
         this.rootService = rootService;
     }
 
+    //Get all books from account
     @GetMapping(value = "/account", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public String allBoughtBooks() {
@@ -27,6 +28,7 @@ public class RootController {
         return rootService.allBoughtBooks();
     }
 
+    //Get all books from market
     @GetMapping(value = "/market", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public String allBooks() {
@@ -34,6 +36,7 @@ public class RootController {
         return rootService.products();
     }
 
+    //Make a deal (buy book(s))
     @PostMapping(value = "/market/deal", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deal(@RequestBody ObjectNode json, HttpServletResponse response) {
         int id = json.get("id").asInt();

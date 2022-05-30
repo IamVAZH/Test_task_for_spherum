@@ -6,6 +6,7 @@ import ru.vazh.model.Product;
 
 import java.util.*;
 
+//Test data for market tests
 public class MarketTestData {
     public static final Product product1 = new Product(0, "Стив Макконелл", "Совершенный код", 1000, 7);
     public static final Product product2 = new Product(1, "Брюс Эккель", "Философия Java", 1500, 15);

@@ -23,6 +23,7 @@ public class RootService {
         this.rootRepository = rootRepository;
     }
 
+    //Give all account books
     public String allBoughtBooks() {
         Account acc = rootRepository.accountInfo();
         Map<String, Object> map = new HashMap<>();
@@ -40,6 +41,7 @@ public class RootService {
         return null;
     }
 
+    //Give all books on market
     public String products() {
         Map<String, Object> map = new HashMap<>();
         ObjectMapper obj = new ObjectMapper();
@@ -51,6 +53,7 @@ public class RootService {
         return productsToJSON(products);
     }
 
+    //Convert products into JSON
     public String productsToJSON(List<Product> products) {
         Map<String, Object> map = new HashMap<>();
         ObjectMapper obj = new ObjectMapper();
@@ -62,7 +65,8 @@ public class RootService {
         }
         return null;
     }
-    
+
+    //Buy book from market
     public boolean deal(int id, int amount) {
         Account account = rootRepository.accountInfo();
         Market market = rootRepository.marketInfo();

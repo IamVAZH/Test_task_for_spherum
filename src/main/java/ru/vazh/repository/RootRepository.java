@@ -19,6 +19,7 @@ public class RootRepository {
     private static App app;
     private static final Logger log = LoggerFactory.getLogger(RootRepository.class);
 
+    //Initialization of repository for main class
     public void initRepo() {
         try {
             app = new CustomDeserializer().deserialize(jsonPath);
@@ -28,6 +29,7 @@ public class RootRepository {
         }
     }
 
+    //Refresh all data necessary for tests
     public void setup() {
         try {
             Product.setCount(0);
@@ -37,14 +39,17 @@ public class RootRepository {
         }
     }
 
+    //Get account
     public Account accountInfo() {
         return app.getAccount();
     }
 
+    //Get market
     public Market marketInfo() {
         return app.getMarket();
     }
 
+    //Save all changes after deal
     public void saveDeal(Account account, Market market) {
         app.setAccount(account);
         app.setMarket(market);

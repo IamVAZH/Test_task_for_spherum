@@ -8,6 +8,7 @@ import ru.vazh.model.Product;
 
 import java.util.*;
 
+//Test data for account tests
 public class AccountTestData {
     public static final int balance = 20000;
     public static final int addedBooksBalance = 14000;

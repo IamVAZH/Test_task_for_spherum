@@ -6,6 +6,7 @@ import ru.vazh.repository.RootRepository;
 
 @SpringBootApplication
 public class Spring {
+    //Path to init data file
     public static String jsonPath;
 
     public static void main(String[] args) {
