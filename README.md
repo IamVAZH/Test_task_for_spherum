@@ -41,7 +41,7 @@
 
 ```curl -X GET 'localhost:8080/market' -H 'Content-Type: application/json' ```<br/>
 >Пример ответа:<br/>
->
+
 ```{
   "products": [
     {
@@ -74,11 +74,12 @@
 В случае успешной сделки ожидается ответ с HTTP статусом **200**, в ином случае **400**.<br/>
 >Пример запроса:<br/>
 
-```curl -X POST 'http://localhost:8080/market/deal' \
+``` curl -X POST 'http://localhost:8080/market/deal' \
 -H 'Content-Type: application/json' \
--d '{"id": 0, "amount": 2}' ```<br/>
+-d '{"id": 0, "amount": 2}' 
+```
 
-###Начальные данные:
+### Начальные данные:
 >Содержимое data.json и testData.json:<br/>
 
 ```{
