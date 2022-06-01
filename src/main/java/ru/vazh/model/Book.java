@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Objects;
 
-public class Book {
+public class Book implements Comparable<Book> {
     private String name;
     private String author;
 
@@ -42,5 +42,10 @@ public class Book {
     @Override
     public int hashCode() {
         return Objects.hash(name, author);
+    }
+
+    @Override
+    public int compareTo(Book o) {
+        return Integer.compare(this.hashCode(), o.hashCode());
     }
 }

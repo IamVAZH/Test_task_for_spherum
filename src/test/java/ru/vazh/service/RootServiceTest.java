@@ -4,11 +4,10 @@ import org.junit.Before;
 import org.junit.Test;
 import ru.vazh.AccountTestData;
 import ru.vazh.MarketTestData;
-import ru.vazh.model.Product;
+import ru.vazh.model.Book;
 import ru.vazh.repository.RootRepository;
-import ru.vazh.util.CustomDeserializer;
 
-import java.io.IOException;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -25,7 +24,7 @@ public class RootServiceTest {
     @Test
     public void allBoughtBooks() {
         //no books after serialization
-        assertEquals(rootService.allBoughtBooks(), AccountTestData.getJson(AccountTestData.books, AccountTestData.balance));
+        assertEquals(rootService.allBoughtBooks(), AccountTestData.getJson(AccountTestData.books, AccountTestData.balance, AccountTestData.subscriptionAmount));
     }
 
     @Test
@@ -50,7 +49,7 @@ public class RootServiceTest {
     public void addNewBooksToAccount() {
         rootService.deal(1, 2);
         rootService.deal(0, 3);
-        assertEquals(rootService.allBoughtBooks(), AccountTestData.getJson(AccountTestData.addedBooks, AccountTestData.addedBooksBalance));
+        assertEquals(rootService.allBoughtBooks(), AccountTestData.getJson(AccountTestData.addedBooks, AccountTestData.addedBooksBalance, AccountTestData.subscriptionAmount));
     }
 
     @Test
@@ -70,7 +69,7 @@ public class RootServiceTest {
     @Test
     public void accountAfterUnsuccessfulDeal() {
         rootService.deal(2, 10);
-        assertEquals(rootService.allBoughtBooks(), AccountTestData.getJson(AccountTestData.books, AccountTestData.balance));
+        assertEquals(rootService.allBoughtBooks(), AccountTestData.getJson(AccountTestData.books, AccountTestData.balance, AccountTestData.subscriptionAmount));
     }
 
 
@@ -78,6 +77,120 @@ public class RootServiceTest {
     public void accountAfterSuccessfulDeal() {
         rootService.deal(2, 1);
         rootService.deal(1, 5);
-        assertEquals(rootService.allBoughtBooks(), AccountTestData.getJson(AccountTestData.successDealBooks, AccountTestData.successDealBalance));
+        assertEquals(rootService.allBoughtBooks(), AccountTestData.getJson(AccountTestData.successDealBooks, AccountTestData.successDealBalance, AccountTestData.subscriptionAmount));
+    }
+
+    @Test
+    public void productsFilterByPrice() {
+        //only with startPrice
+        assertEquals(rootService.productsFilterByPrice(1675, null), MarketTestData.getJson(MarketTestData.productsFilterStartPrice));
+
+        //only with endPrice
+        assertEquals(rootService.productsFilterByPrice(null, 1400), MarketTestData.getJson(MarketTestData.productsFilterEndPrice));
+
+        //with startPrice and endPrice
+        assertEquals(rootService.productsFilterByPrice(1280, 1990), MarketTestData.getJson(MarketTestData.productsFilterStartEndPrice));
+
+        //no books found
+        assertEquals(rootService.productsFilterByPrice(7000, 19000), MarketTestData.getJson(List.of()));
+    }
+
+    @Test
+    public void productsFilterByName() {
+        //find book
+        assertEquals(rootService.productsFilterByName("Effective Java"), MarketTestData.getJson(List.of(MarketTestData.product3)));
+
+        //find book but it's amount = 0
+        assertEquals(rootService.productsFilterByName("Head First Java"), MarketTestData.getJson(List.of()));
+
+        //no books found
+        assertEquals(rootService.productsFilterByName("Чистый код"), MarketTestData.getJson(List.of()));
+    }
+
+    @Test
+    public void productsFilterByAuthor() {
+        //find book
+        assertEquals(rootService.productsFilterByAuthor("Joshua Bloch"), MarketTestData.getJson(List.of(MarketTestData.product3)));
+
+        //find book but it's amount = 0
+        assertEquals(rootService.productsFilterByAuthor("Sierra, Kathy, Bates, Bert"), MarketTestData.getJson(List.of()));
+
+        //no books found
+        assertEquals(rootService.productsFilterByAuthor("Boris Dobrodeyev"), MarketTestData.getJson(List.of()));
+    }
+
+    @Test
+    public void bookmarks() {
+        //marked books at start
+        assertEquals(rootService.bookmarks(), AccountTestData.getJsonForBookmarks(List.of()));
+    }
+
+    @Test
+    public void addBookmarks() {
+        //adding new book
+        assertTrue(rootService.addBookmarks(new Book("Effective Java", "Joshua Bloch")));
+        //adding the same book
+        assertFalse(rootService.addBookmarks(new Book("Effective Java", "Joshua Bloch")));
+    }
+
+    @Test
+    public void deleteBookmarks() {
+        //deleting from empty
+        assertFalse(rootService.deleteBookmarks(new Book("Совершенный код", "Стив Макконелл")));
+
+        //common deleting
+        rootService.addBookmarks(new Book("Совершенный код", "Стив Макконелл"));
+        assertTrue(rootService.deleteBookmarks(new Book("Совершенный код", "Стив Макконелл")));
+    }
+
+
+    @Test
+    public void bookmarksAfterAddingAndDeletingSomeBooks() {
+        rootService.addBookmarks(new Book("Effective Java", "Joshua Bloch"));
+        rootService.addBookmarks(new Book("Совершенный код", "Стив Макконелл"));
+        //After adding
+        assertEquals(rootService.bookmarks(), AccountTestData.getJsonForBookmarks(AccountTestData.markedAddedBooks));
+
+        rootService.deleteBookmarks(new Book("Effective Java", "Joshua Bloch"));
+        //After deleting
+        assertEquals(rootService.bookmarks(), AccountTestData.getJsonForBookmarks(AccountTestData.markedDeletedBooks));
+    }
+
+    @Test
+    public void subscribe() {
+        //no subscribe card by this id
+        assertFalse(rootService.subscribe(100));
+        //account balance is not enough
+        assertFalse(rootService.subscribe(2));
+        //common subscribe on one of cards
+        assertTrue(rootService.subscribe(1));
+    }
+
+    @Test
+    public void refund() {
+        //no book found in account books
+        assertFalse(rootService.refund(new Book("Effective Java", "Joshua Bloch"), 0));
+
+        //Amount of books on account < amount which we want to refund
+        rootService.deal(0, 5);
+        assertFalse(rootService.refund(new Book("Совершенный код", "Стив Макконелл"), 10));
+
+        //No books on market, but you still can sell it to market
+        rootService.deal(0, 2);
+        assertTrue(rootService.refund(new Book("Совершенный код", "Стив Макконелл"), 7));
+    }
+
+    @Test
+    public void dealWithSubscription() {
+        rootService.subscribe(1); // price = 6000, amount = 12 books
+
+        //Not enough amount of books by subscription. You need to buy by you own money. So not enough money
+        assertFalse(rootService.deal(1, 15));
+
+        //Price of the book is bigger than 2000. So not enough money
+        assertFalse(rootService.deal(2, 10));
+
+        //Buy all books by subscription,max here it's 12. That's why you can buy it
+        assertTrue(rootService.deal(1, 12));
     }
 }
