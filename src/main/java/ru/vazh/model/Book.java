@@ -48,4 +48,12 @@ public class Book implements Comparable<Book> {
     public int compareTo(Book o) {
         return Integer.compare(this.hashCode(), o.hashCode());
     }
+
+    @Override
+    public String toString() {
+        return "Book{" +
+                "name='" + name + '\'' +
+                ", author='" + author + '\'' +
+                '}';
+    }
 }

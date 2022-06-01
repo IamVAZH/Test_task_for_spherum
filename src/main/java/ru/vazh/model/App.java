@@ -28,4 +28,12 @@ public class App {
     public void setMarket(Market market) {
         this.market = market;
     }
+
+    @Override
+    public String toString() {
+        return "App{" +
+                "account=" + account +
+                ", market=" + market +
+                '}';
+    }
 }

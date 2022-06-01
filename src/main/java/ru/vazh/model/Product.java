@@ -69,4 +69,14 @@ public class Product implements Comparable<Product> {
     public int compareTo(Product o) {
         return Integer.compare(this.getId(), o.getId());
     }
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "id=" + id +
+                ", book=" + book +
+                ", price=" + price +
+                ", amount=" + amount +
+                '}';
+    }
 }

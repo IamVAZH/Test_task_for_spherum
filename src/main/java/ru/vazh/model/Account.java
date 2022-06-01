@@ -55,4 +55,14 @@ public class Account {
     public void setBookmarks(List<Book> bookmarks) {
         this.bookmarks = bookmarks;
     }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "balance=" + balance +
+                ", books=" + books +
+                ", subscriptionCount=" + subscriptionCount +
+                ", bookmarks=" + bookmarks +
+                '}';
+    }
 }

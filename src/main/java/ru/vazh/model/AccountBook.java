@@ -38,4 +38,12 @@ public class AccountBook implements Comparable<AccountBook> {
     public int compareTo(AccountBook o) {
         return Integer.compare(this.getBook().hashCode(), o.getBook().hashCode());
     }
+
+    @Override
+    public String toString() {
+        return "AccountBook{" +
+                "book=" + book +
+                ", amount=" + amount +
+                '}';
+    }
 }
